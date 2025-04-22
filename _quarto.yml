@@ -1,4 +1,3 @@
----
 project: 
   title: "daily assignment 21"
   output-dir: docs
@@ -6,5 +5,4 @@ project:
 format: 
   html:
     self-contained: true
----
 
