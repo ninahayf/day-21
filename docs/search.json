@@ -1,0 +1,51 @@
+[
+  {
+    "objectID": "day-21.html",
+    "href": "day-21.html",
+    "title": "day-21",
+    "section": "",
+    "text": "library(dataRetrieval)\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nlibrary(tsibble)\n\nRegistered S3 method overwritten by 'tsibble':\n  method               from \n  as_tibble.grouped_df dplyr\n\n\n\nAttaching package: 'tsibble'\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, union\n\nlibrary(ggplot2)\nlibrary(plotly)\n\n\nAttaching package: 'plotly'\n\n\nThe following object is masked from 'package:ggplot2':\n\n    last_plot\n\n\nThe following object is masked from 'package:stats':\n\n    filter\n\n\nThe following object is masked from 'package:graphics':\n\n    layout\n\nlibrary(feasts)\n\nLoading required package: fabletools\n\nlibrary(lubridate)\n\n\nAttaching package: 'lubridate'\n\n\nThe following object is masked from 'package:tsibble':\n\n    interval\n\n\nThe following objects are masked from 'package:base':\n\n    date, intersect, setdiff, union"
+  },
+  {
+    "objectID": "day-21.html#load-libraries",
+    "href": "day-21.html#load-libraries",
+    "title": "day-21",
+    "section": "",
+    "text": "library(dataRetrieval)\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nlibrary(tsibble)\n\nRegistered S3 method overwritten by 'tsibble':\n  method               from \n  as_tibble.grouped_df dplyr\n\n\n\nAttaching package: 'tsibble'\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, union\n\nlibrary(ggplot2)\nlibrary(plotly)\n\n\nAttaching package: 'plotly'\n\n\nThe following object is masked from 'package:ggplot2':\n\n    last_plot\n\n\nThe following object is masked from 'package:stats':\n\n    filter\n\n\nThe following object is masked from 'package:graphics':\n\n    layout\n\nlibrary(feasts)\n\nLoading required package: fabletools\n\nlibrary(lubridate)\n\n\nAttaching package: 'lubridate'\n\n\nThe following object is masked from 'package:tsibble':\n\n    interval\n\n\nThe following objects are masked from 'package:base':\n\n    date, intersect, setdiff, union"
+  },
+  {
+    "objectID": "day-21.html#download-and-prepare-data",
+    "href": "day-21.html#download-and-prepare-data",
+    "title": "day-21",
+    "section": "Download and Prepare Data",
+    "text": "Download and Prepare Data\n\npoudre_flow &lt;- readNWISdv(siteNumber = \"06752260\",\n                          parameterCd = \"00060\",\n                          startDate = \"2013-01-01\",\n                          endDate = \"2023-12-31\") |&gt;\n  renameNWISColumns() |&gt;\n  mutate(Date = yearmonth(Date)) |&gt;\n  group_by(Date) |&gt;\n  summarise(Flow = mean(Flow, na.rm = TRUE))\n\nGET:https://waterservices.usgs.gov/nwis/dv/?site=06752260&format=waterml%2C1.1&ParameterCd=00060&StatCd=00003&startDT=2013-01-01&endDT=2023-12-31"
+  },
+  {
+    "objectID": "day-21.html#convert-to-tsibble",
+    "href": "day-21.html#convert-to-tsibble",
+    "title": "day-21",
+    "section": "Convert to tsibble",
+    "text": "Convert to tsibble\n\npoudre_tsibble &lt;- as_tsibble(poudre_flow, index = Date)"
+  },
+  {
+    "objectID": "day-21.html#plot-time-series",
+    "href": "day-21.html#plot-time-series",
+    "title": "day-21",
+    "section": "Plot Time Series",
+    "text": "Plot Time Series\n\ngg_time &lt;- ggplot(poudre_tsibble, aes(x = Date, y = Flow)) +\n  geom_line(color = \"blue\") +\n  labs(title = \"Monthly Mean Streamflow: Cache la Poudre River\",\n       x = \"Date\", y = \"Flow (cfs)\")\n\ngg_time\n\n\n\n\n\n\n\n\n\n# Animate with plotly\nggplotly(gg_time)"
+  },
+  {
+    "objectID": "day-21.html#subseries-plot",
+    "href": "day-21.html#subseries-plot",
+    "title": "day-21",
+    "section": "Subseries Plot",
+    "text": "Subseries Plot\n\ngg_subseries(poudre_tsibble, Flow)"
+  },
+  {
+    "objectID": "day-21.html#interpretation",
+    "href": "day-21.html#interpretation",
+    "title": "day-21",
+    "section": "Interpretation",
+    "text": "Interpretation\nThe subseries plot shows how streamflow changes by month across years. Each line represents a year, and each facet represents a month, which helps visualize seasonal cycles. Typically, you’ll notice higher flows in spring/early summer and lower flows in late summer/fall. The “subseries” are the flow values for each month across the years, showing consistent seasonal peaks and troughs."
+  }
+]
