@@ -1,0 +1,10 @@
+---
+project: 
+  title: "daily assignment 21"
+  output-dir: docs
+  type: website
+format: 
+  html:
+    self-contained: true
+---
+

@@ -1,0 +1,59 @@
+---
+title: "day-21"
+subtitle: 'ESS 330'
+author:
+  - name: Nina Hayford
+    email: "ninahayf@colostate.edu"
+format: html
+execute: 
+  echo: true
+---
+## Load Libraries
+```{r}
+library(dataRetrieval)
+library(dplyr)
+library(tsibble)
+library(ggplot2)
+library(plotly)
+library(feasts)
+library(lubridate)
+```
+
+## Download and Prepare Data 
+```{r}
+poudre_flow <- readNWISdv(siteNumber = "06752260",
+                          parameterCd = "00060",
+                          startDate = "2013-01-01",
+                          endDate = "2023-12-31") |>
+  renameNWISColumns() |>
+  mutate(Date = yearmonth(Date)) |>
+  group_by(Date) |>
+  summarise(Flow = mean(Flow, na.rm = TRUE))
+```
+
+## Convert to tsibble
+```{r}
+poudre_tsibble <- as_tsibble(poudre_flow, index = Date)
+```
+
+## Plot Time Series 
+```{r}
+gg_time <- ggplot(poudre_tsibble, aes(x = Date, y = Flow)) +
+  geom_line(color = "blue") +
+  labs(title = "Monthly Mean Streamflow: Cache la Poudre River",
+       x = "Date", y = "Flow (cfs)")
+
+gg_time
+```
+```{r}
+# Animate with plotly
+ggplotly(gg_time)
+```
+
+## Subseries Plot 
+```{r}
+gg_subseries(poudre_tsibble, Flow)
+```
+## Interpretation
+The subseries plot shows how streamflow changes by month across years. Each line represents a year, and each facet represents a month, which helps visualize seasonal cycles. Typically, you'll notice higher flows in spring/early summer and lower flows in late summer/fall. The "subseries" are the flow values for each month across the years, showing consistent seasonal peaks and troughs. 
+
